@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>超市购物智能助手</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #fdf4ff 0%, #f0e7ff 100%);
+            min-height: 100vh;
+        }
+
+        /* 顶部导航 */
+        .header {
+            background: linear-gradient(90deg, #e2c3f5, #d8b4f7);
+            padding: 18px 24px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #4a2a69;
+            box-shadow: 0 2px 10px rgba(210, 170, 250, 0.15);
+        }
+
+        .logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, #b989e4, #a178e0);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .header-title {
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        /* 主容器 */
+        .main-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        /* 聊天卡片 */
+        .chat-card {
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 8px 30px rgba(180, 140, 220, 0.08);
+            overflow: hidden;
+        }
+
+        /* 欢迎区域 */
+        .welcome-section {
+            padding: 50px 30px;
+            text-align: center;
+            border-bottom: 1px solid #f4e9ff;
+        }
+
+        .welcome-title {
+            font-size: 26px;
+            color: #5c3a80;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .welcome-desc {
+            font-size: 16px;
+            color: #8a70a8;
+            margin-bottom: 45px;
+        }
+
+        /* 快捷按钮 */
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .action-item {
+            width: 160px;
+            padding: 20px;
+            background: #fbf7ff;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid #f0e3ff;
+        }
+
+        .action-item:hover {
+            transform: translateY(-3px);
+            background: #f4e9ff;
+            box-shadow: 0 4px 12px rgba(180, 140, 220, 0.1);
+        }
+
+        .action-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+
+        .action-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #6a4a90;
+            margin-bottom: 4px;
+        }
+
+        .action-desc {
+            font-size: 13px;
+            color: #9a82b9;
+        }
+
+        /* 聊天区域 */
+        .chat-history {
+            height: 520px;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            display: none;
+        }
+
+        .message {
+            max-width: 72%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            line-height: 1.5;
+        }
+
+        .bot-message {
+            background: #f6eeff;
+            color: #5c3a80;
+            align-self: flex-start;
+        }
+
+        .user-message {
+            background: linear-gradient(90deg, #c084f5, #b371f0);
+            color: white;
+            align-self: flex-end;
+        }
+
+        /* 收款码 */
+        .qr-code-box {
+            border: 1px solid #e8d5ff;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 10px;
+            background: #fcf9ff;
+        }
+
+        .qr-code-box img {
+            width: 180px;
+            height: 180px;
+            border-radius: 8px;
+            margin: 8px 0;
+        }
+
+        /* 输入框 */
+        .input-area {
+            display: flex;
+            gap: 12px;
+            padding: 20px 24px;
+            border-top: 1px solid #f4e9ff;
+            background: #fdfbff;
+        }
+
+        #userInput {
+            flex: 1;
+            padding: 14px 18px;
+            border: 1px solid #e8d5ff;
+            border-radius: 14px;
+            outline: none;
+            font-size: 15px;
+            background: #fff;
+        }
+
+        #sendBtn {
+            padding: 0 26px;
+            background: linear-gradient(90deg, #b989e4, #a87fe0);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        #sendBtn:hover {
+            background: #a178e0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div class="logo">🛒</div>
+        <div class="header-title">超市购物智能助手</div>
+    </div>
+
+    <div class="main-container">
+        <div class="chat-card">
+            <div class="welcome-section" id="welcomeSection">
+                <div class="welcome-title">👋 欢迎使用智能购物助手</div>
+                <div class="welcome-desc">查询价格 · 咨询优惠 · 一键结账 · 便捷支付</div>
+
+                <div class="quick-actions">
+                    <div class="action-item" onclick="quickSend('苹果多少钱一斤')">
+                        <div class="action-icon">🍎</div>
+                        <div class="action-title">商品价格</div>
+                        <div class="action-desc">一键查询</div>
+                    </div>
+
+                    <div class="action-item" onclick="quickSend('今天有什么优惠')">
+                        <div class="action-icon">🎁</div>
+                        <div class="action-title">优惠活动</div>
+                        <div class="action-desc">实时了解</div>
+                    </div>
+
+                    <div class="action-item" onclick="quickSend('我要结账')">
+                        <div class="action-icon">💳</div>
+                        <div class="action-title">一键结账</div>
+                        <div class="action-desc">扫码支付</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chat-history" id="chatBox"></div>
+
+            <div class="input-area">
+                <textarea id="userInput" placeholder="请输入您的问题..." rows="1"></textarea>
+                <button id="sendBtn" onclick="sendMessage()">发送</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 👇 这里是你的真实 API 信息
+        const DIFY_API_URL = "https://api.dify.ai/v1/chat-messages";
+        const API_KEY = "Bearer app-3X6EX2hFYYTEhL5nJmNJw68i";
+
+        let isFirstMessage = true;
+        let conversationId = null;
+
+        async function sendMessage() {
+            const input = document.getElementById("userInput");
+            const text = input.value.trim();
+            if (!text) return;
+
+            if (isFirstMessage) {
+                document.getElementById("welcomeSection").style.display = "none";
+                document.getElementById("chatBox").style.display = "flex";
+                isFirstMessage = false;
+            }
+
+            addMessage(text, "user");
+            input.value = "";
+
+            const botMsg = addMessage("思考中...", "bot");
+
+            try {
+                // 如果是结账，直接显示图片，不请求AI，不显示任何乱码
+                if (text.includes("结账") || text.includes("付款") || text.includes("买单")) {
+                    botMsg.innerHTML = `
+                        请扫码完成支付
+                        <div class="qr-code-box">
+                            <img src="https://s3.bmp.ovh/2026/04/01/NcTDAvqT.jpg" alt="收款码">
+                        </div>
+                    `;
+                    return;
+                }
+
+                // 非结账，正常请求AI
+                const response = await fetch(DIFY_API_URL, {
+                    method: "POST",
+                    headers: {
+                        "Authorization": API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        inputs: { input: text },
+                        query: text,
+                        user: "customer",
+                        conversation_id: conversationId,
+                        response_mode: "streaming"
+                    })
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let fullAnswer = "";
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split("\n");
+
+                    for (const line of lines) {
+                        if (!line.startsWith("data: ")) continue;
+                        try {
+                            const data = JSON.parse(line.replace("data: ", ""));
+                            if (data.answer) {
+                                fullAnswer += data.answer;
+                                botMsg.textContent = fullAnswer;
+                            }
+                            if (data.conversation_id) {
+                                conversationId = data.conversation_id;
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+            } catch (err) {
+                botMsg.textContent = "连接失败：" + err.message;
+            }
+        }
+
+        function quickSend(text) {
+            document.getElementById("userInput").value = text;
+            sendMessage();
+        }
+
+        function addMessage(text, type) {
+            const chatBox = document.getElementById("chatBox");
+            const msgDiv = document.createElement("div");
+            msgDiv.className = `message ${type}-message`;
+            msgDiv.textContent = text;
+            chatBox.appendChild(msgDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+            return msgDiv;
+        }
+
+        document.getElementById("userInput").addEventListener("keydown", function (e) {
+            if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>
